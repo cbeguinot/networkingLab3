@@ -1,0 +1,6 @@
+D:\ING4\S8\C#\networkingLab3\FinalProject\bin\Debug\FinalProject.exe.config
+D:\ING4\S8\C#\networkingLab3\FinalProject\bin\Debug\FinalProject.exe
+D:\ING4\S8\C#\networkingLab3\FinalProject\bin\Debug\FinalProject.pdb
+D:\ING4\S8\C#\networkingLab3\FinalProject\obj\Debug\FinalProject.csproj.CoreCompileInputs.cache
+D:\ING4\S8\C#\networkingLab3\FinalProject\obj\Debug\FinalProject.exe
+D:\ING4\S8\C#\networkingLab3\FinalProject\obj\Debug\FinalProject.pdb

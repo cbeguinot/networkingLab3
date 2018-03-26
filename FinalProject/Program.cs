@@ -13,7 +13,11 @@ namespace FinalProject
     {
         static void Server()
         {
-            Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            sock.Listen(100);
+
+            Socket newSocket = sock.Accept();
+
             IPEndPoint iep = new IPEndPoint(IPAddress.Any, 5000);
             sock.Bind(iep);
             EndPoint ep = (EndPoint)iep;
@@ -29,6 +33,9 @@ namespace FinalProject
 
                 Console.WriteLine("Pauline: " + Message);
             }
+
+            sock.Close();
+            sock.Disconnect(true);
         }
 
         static void Main(string[] args)
@@ -49,12 +56,22 @@ namespace FinalProject
                 // You are the client
                 Console.WriteLine("You are the client");
 
+                //Adresse du serveur auquel on se connecte
                 String host = Console.ReadLine(); // 10.4.184.141
+                //Port random
                 int port = 5000;
-                Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                //s.Connect(host, port);
 
-                IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), 5000);
+                //Socket
+                //Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp); //Ca c'est pour udp
+                Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//Ca c'est pour tcp
+                s.Connect(host, port); 
+
+                //Coucou, toi je sais pas encore qui t'es
+                IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), port);
+
+                //C'est quoi ton p'tit nom ? Et ton adresse IP ?
+                Console.WriteLine("Ton nom : ");
+
 
                 for (;;)
                 {
