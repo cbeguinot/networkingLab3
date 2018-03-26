@@ -16,7 +16,7 @@ namespace FinalProject
             int port = 5000;
 
             TcpListener server = new TcpListener(IPAddress.Any, port);
-
+            
             server.Start();
 
             TcpClient client = server.AcceptTcpClient();
@@ -58,7 +58,7 @@ namespace FinalProject
 
         static void Main(string[] args)
         {
-
+            Console.WriteLine("1 pour serveur, 2 pour client : ");
             String choice = Console.ReadLine();
 
             if (choice == "1")
@@ -75,29 +75,38 @@ namespace FinalProject
 
                 //Adresse du serveur auquel on se connecte
                 String host = Console.ReadLine(); // 10.4.184.141
-                //Port random
-                int port = 5000;
+                int port = 5000; //Port random
 
                 //Socket
-                //Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp); //Ca c'est pour udp
+                        //Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp); //Ca c'est pour udp
                 Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//Ca c'est pour tcp
-                s.Connect(host, port);
 
-                //Coucou, toi je sais pas encore qui t'es
-                IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), port);
+                //Pour tcp
+                TcpClient tcpClient = new TcpClient(host, port);
+                NetworkStream stream = tcpClient.GetStream();
+            
+                        //Pour udp
+                        //s.Connect(host, port);
+                        //IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), port);
 
-                //C'est quoi ton p'tit nom ? Et ton adresse IP ?
                 Console.WriteLine("Ton nom : ");
+                
+                String name = Console.ReadLine();
+                Byte[] n_data = System.Text.Encoding.ASCII.GetBytes(name);
+                stream.Write(n_data, 0, n_data.Length);
 
                 for (;;)
                 {
-
+                    Console.Write(name + " : ");
                     String Message = Console.ReadLine();
-
-                    s.SendTo(Encoding.UTF8.GetBytes(Message), iep);
+                    Byte[] data = System.Text.Encoding.ASCII.GetBytes(Message);
+                    stream.Write(data, 0, data.Length);
+                    //s.SendTo(Encoding.UTF8.GetBytes(Message), iep);
 
                     if (Message == "quit") break;
                 }
+
+                stream.Close();
 
             }
             Console.WriteLine("Quitting the Tchat");
