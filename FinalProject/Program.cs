@@ -159,7 +159,7 @@ namespace FinalProject
 
                 for (;;)
                 {
-                    Console.Write(name + " : ");
+                    //Console.Write(name + " : ");
                     String Message = Console.ReadLine();
                     Byte[] data = System.Text.Encoding.ASCII.GetBytes(Message);
                     stream.Write(data, 0, data.Length);
