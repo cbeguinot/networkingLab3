@@ -130,6 +130,7 @@ namespace FinalProject
                 Console.WriteLine("You are the client");
 
                 //Adresse du serveur auquel on se connecte
+                Console.WriteLine("Entre l'adresse IP du serveur:");
                 String host = Console.ReadLine(); // 10.4.184.141
                 int port = 5000; //Port random
 
