@@ -1,0 +1,6 @@
+C:\Users\Louis\Desktop\Docs ECE\ING4\S2\C#\Final Lab\networkingLab3\FinalProject\bin\Debug\FinalProject.exe.config
+C:\Users\Louis\Desktop\Docs ECE\ING4\S2\C#\Final Lab\networkingLab3\FinalProject\bin\Debug\FinalProject.exe
+C:\Users\Louis\Desktop\Docs ECE\ING4\S2\C#\Final Lab\networkingLab3\FinalProject\bin\Debug\FinalProject.pdb
+C:\Users\Louis\Desktop\Docs ECE\ING4\S2\C#\Final Lab\networkingLab3\FinalProject\obj\Debug\FinalProject.csprojResolveAssemblyReference.cache
+C:\Users\Louis\Desktop\Docs ECE\ING4\S2\C#\Final Lab\networkingLab3\FinalProject\obj\Debug\FinalProject.exe
+C:\Users\Louis\Desktop\Docs ECE\ING4\S2\C#\Final Lab\networkingLab3\FinalProject\obj\Debug\FinalProject.pdb
