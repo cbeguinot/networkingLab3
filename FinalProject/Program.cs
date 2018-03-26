@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,17 +12,53 @@ namespace FinalProject
 {
     class Program
     {
+        static readonly object _lock = new object();
+        static readonly Dictionary<int, TcpClient> list_clients = new Dictionary<int, TcpClient>();
+
+        public static void broadcast(string data)
+        {
+            byte[] buffer = Encoding.ASCII.GetBytes(data + Environment.NewLine);
+
+            lock (_lock)
+            {
+                foreach (TcpClient c in list_clients.Values)
+                {
+                    NetworkStream stream = c.GetStream();
+
+                    stream.Write(buffer, 0, buffer.Length);
+                }
+            }
+        }
+
+        static void ReceiveData(TcpClient client)
+        {
+            NetworkStream ns = client.GetStream();
+            byte[] receivedBytes = new byte[1024];
+            int byte_count;
+
+            while ((byte_count = ns.Read(receivedBytes, 0, receivedBytes.Length)) > 0)
+            {
+                Console.Write(Encoding.ASCII.GetString(receivedBytes, 0, byte_count));
+            }
+        }
+
         private static void ThreadProc(object obj)
         {
             var client = (TcpClient)obj;
 
             NetworkStream stream = client.GetStream();
+            
+            var pi = stream.GetType().GetProperty("Socket", BindingFlags.NonPublic | BindingFlags.Instance);
+            var socketIp = ((Socket)pi.GetValue(stream, null)).RemoteEndPoint.ToString();
+            Console.WriteLine(socketIp);
 
-            Console.WriteLine("New user");
+            broadcast("New user connected from: " + socketIp);
 
             int nbOfData = 0;
 
-            String name = "";
+            String name = "Un utilisateur";
+
+            broadcast(name + " a rejoint le tchat...");
 
             for (;;)
             {
@@ -34,16 +71,21 @@ namespace FinalProject
                 {
                     name = responseData;
                 }
+                else
+                {
+                    String res = name + ": " + responseData;
+                    broadcast(res);
+                }
 
                 if (responseData == "quit")
                 {
                     break;
                 }
 
-                Console.WriteLine(name + ": " + responseData);
-
                 nbOfData++;
             }
+
+            broadcast(name + " a quitté le tchat...");
 
             stream.Close();
 
@@ -52,6 +94,8 @@ namespace FinalProject
 
         static void Server()
         {
+            int idOfClients = 1;
+
             int port = 5000;
 
             TcpListener server = new TcpListener(IPAddress.Any, port);
@@ -61,7 +105,9 @@ namespace FinalProject
             while (true)
             {
                 TcpClient client = server.AcceptTcpClient();
+                lock (_lock) list_clients.Add(idOfClients, client);
                 ThreadPool.QueueUserWorkItem(ThreadProc, client);
+                idOfClients++;
             }
             
         }
@@ -88,16 +134,22 @@ namespace FinalProject
                 int port = 5000; //Port random
 
                 //Socket
-                        //Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp); //Ca c'est pour udp
+                //Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp); //Ca c'est pour udp
                 Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);//Ca c'est pour tcp
 
                 //Pour tcp
                 TcpClient tcpClient = new TcpClient(host, port);
                 NetworkStream stream = tcpClient.GetStream();
-            
-                        //Pour udp
-                        //s.Connect(host, port);
-                        //IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), port);
+
+                Thread thread = new Thread(o => ReceiveData((TcpClient)o));
+
+                thread.Start(tcpClient);
+
+                //Pour udp
+                //s.Connect(host, port);
+                //IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), port);
+
+                //Thread t = new Thread(ReceiveBroadcast);
 
                 Console.WriteLine("Ton nom : ");
                 
