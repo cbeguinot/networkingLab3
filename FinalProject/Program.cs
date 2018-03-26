@@ -33,24 +33,41 @@ namespace FinalProject
 
         static void Main(string[] args)
         {
-            Thread t = new Thread(Server);
-            t.Start();
-            String host = Console.ReadLine(); // 10.4.184.141
-            int port = 5000;
-            Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            //s.Connect(host, port);
 
-            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), 5000);
+            String choice = Console.ReadLine();
 
-            for (;;)
+            if (choice == "1")
             {
+                // You are the server
+                Console.WriteLine("You are the server");
 
-                String Message = Console.ReadLine();
-
-                s.SendTo(Encoding.UTF8.GetBytes(Message), iep);
-
-                if (Message == "quit") break;
+                Thread t = new Thread(Server);
+                t.Start();
             }
+            else
+            {
+                // You are the client
+                Console.WriteLine("You are the client");
+
+                String host = Console.ReadLine(); // 10.4.184.141
+                int port = 5000;
+                Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                //s.Connect(host, port);
+
+                IPEndPoint iep = new IPEndPoint(IPAddress.Parse(host), 5000);
+
+                for (;;)
+                {
+
+                    String Message = Console.ReadLine();
+
+                    s.SendTo(Encoding.UTF8.GetBytes(Message), iep);
+
+                    if (Message == "quit") break;
+                }
+
+            }
+            Console.WriteLine("Quitting the Tchat");
         }
     }
 }
