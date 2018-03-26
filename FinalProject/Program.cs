@@ -11,15 +11,9 @@ namespace FinalProject
 {
     class Program
     {
-        static void Server()
+        private static void ThreadProc(object obj)
         {
-            int port = 5000;
-
-            TcpListener server = new TcpListener(IPAddress.Any, port);
-            
-            server.Start();
-
-            TcpClient client = server.AcceptTcpClient();
+            var client = (TcpClient)obj;
 
             NetworkStream stream = client.GetStream();
 
@@ -28,7 +22,7 @@ namespace FinalProject
             int nbOfData = 0;
 
             String name = "";
-            
+
             for (;;)
             {
                 Byte[] data = new Byte[256];
@@ -36,7 +30,7 @@ namespace FinalProject
                 Int32 bytes = stream.Read(data, 0, data.Length);
                 responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
 
-                if(nbOfData == 0)
+                if (nbOfData == 0)
                 {
                     name = responseData;
                 }
@@ -50,10 +44,26 @@ namespace FinalProject
 
                 nbOfData++;
             }
-            
+
             stream.Close();
 
             client.Close();
+        }
+
+        static void Server()
+        {
+            int port = 5000;
+
+            TcpListener server = new TcpListener(IPAddress.Any, port);
+            
+            server.Start();
+
+            while (true)
+            {
+                TcpClient client = server.AcceptTcpClient();
+                ThreadPool.QueueUserWorkItem(ThreadProc, client);
+            }
+            
         }
 
         static void Main(string[] args)
